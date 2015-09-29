@@ -1,45 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Sharepoint by e-coucou</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/github-dark.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
     <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
+    <title>Sharepoint by e-coucou</title>
   </head>
+
   <body>
-
-      <header>
+    <header>
+      <div class="inner">
         <h1>Sharepoint</h1>
-        <p>Lister les fichiers dans un site SharePoint hébergé sur Microsoft Online</p>
-      </header>
+        <h2>Lister les fichiers dans un site SharePoint hébergé sur Microsoft Online</h2>
+        <a href="https://github.com/e-coucou/sharepoint" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
 
-      <div id="banner">
-        <span id="logo"></span>
-
-        <a href="https://github.com/e-coucou/sharepoint" class="button fork"><strong>View On GitHub</strong></a>
-        <div class="downloads">
-          <span>Downloads:</span>
-          <ul>
-            <li><a href="https://github.com/e-coucou/sharepoint/zipball/master" class="button">ZIP</a></li>
-            <li><a href="https://github.com/e-coucou/sharepoint/tarball/master" class="button">TAR</a></li>
-          </ul>
-        </div>
-      </div><!-- end banner -->
-
-    <div class="wrapper">
-      <nav>
-        <ul></ul>
-      </nav>
-      <section>
-        <h1>
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
 <a id="sharepoint" class="anchor" href="#sharepoint" aria-hidden="true"><span class="octicon octicon-link"></span></a>sharepoint</h1>
 
 <p>Lister les fichiers dans un site SharePoint hébergé sur Microsoft Online</p>
@@ -50,33 +39,48 @@
 
 <p>La syntaxe :</p>
 
-<p><ul>usage:<br>python liste_sharepoint.py  [-h] [-p PROXY] [-e EMAIL] [-s SITE] [-u URL] [-d] [-O] [-U USERNAME] [-D DOMAINE] [-P PASSWORD] [-v] <br>bibliotheque</ul></p>
+<p>usage: liste_sharepoint.py  [-h] [-p PROXY] [-e EMAIL] [-s SITE] [-u URL] [-d]
+                            [-O] [-U USERNAME] [-D DOMAINE] [-P PASSWORD] [-v]
+                            bibliotheque</p>
 
 <p>positional arguments:
-    <tr><b>bibliotheque</b></tr><tr>renseignez le nom de la bibliotheque</tr></p>
+    bibliotheque          renseignez le nom de la bibliotheque</p>
 
 <p>optional arguments:
-<ul>   
-    <li>-h, --help                  show this help message and exit</li>
-    <li>-p PROXY, --proxy PROXY     si vous etes derriere un proxy =1</li>
-    <li>-e EMAIL, --email EMAIL     adresse mail</li>
-    <li>-s SITE, --site SITE        adresse sharepoint du serveur -&gt; ex: <a href="https://my.sharepoint.com">https://my.sharepoint.com</a></li>
-    <li>-u URL, --url URL           reference relative du site sharepoint : /sites/.../</li>
-    <li>-d, --debug                 true en mode DEBUG</li>
-    <li>-O, --Outside               true en mode Externe (NO PROXY)</li>
-    <li>-U USERNAME, --username     USERNAME username</li>
-    <li>-D DOMAINE, --Domaine       DOMAINE Domaine de l'Active Directory</li>
-    <li>-P PASSWORD, --Password     PASSWORD password</li>
-    <li>-v, --verbose               toutes les infos ...</li></ul></p>
+    -h, --help                  show this help message and exit
+    -p PROXY, --proxy PROXY     si vous etes derriere un proxy =1
+    -e EMAIL, --email EMAIL     adresse mail
+    -s SITE, --site SITE        adresse sharepoint du serveur -&gt; ex: <a href="https://my.sharepoint.com">https://my.sharepoint.com</a>
+    -u URL, --url URL           reference relative du site sharepoint : /sites/.../
+    -d, --debug                 true en mode DEBUG
+    -O, --Outside               true en mode Externe (NO PROXY)
+    -U USERNAME, --username     USERNAME username
+    -D DOMAINE, --Domaine       DOMAINE Domaine de l'Active Directory
+    -P PASSWORD, --Password     PASSWORD password
+    -v, --verbose               toutes les infos ...</p>
 
+<blockquote>
 <p>(c) e-coucou 2015</p>
-      </section>
-      <footer>
-        <p>Project maintained by <a href="https://github.com/e-coucou">e-coucou</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
-      </footer>
+</blockquote>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/e-coucou/sharepoint/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/e-coucou/sharepoint/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/e-coucou/sharepoint"></a> is maintained by <a href="https://github.com/e-coucou">e-coucou</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
     </div>
-    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
-    
+
+  
   </body>
 </html>
