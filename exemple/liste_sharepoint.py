@@ -45,7 +45,7 @@ def decode_folder(session,source,level,folder):
     except:
         sys.stdout('#')
         sys.stdout.flush()
-        print source
+        print source  
     nsmap = {'atom': 'http://www.w3.org/2005/Atom','d': 'http://schemas.microsoft.com/ado/2007/08/dataservices','m': 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'}
     cnt=0
     for m in xml.xpath("//atom:entry/atom:content/m:properties", namespaces=nsmap):
@@ -90,6 +90,7 @@ def recurse_dir(session,folder,level):
     level = level + 1
     read_files(session,folder,level)
     url = args.site + args.url +"_api/Web/GetFolderByServerRelativeUrl('"+folder+"')/folders"
+
     try:
 	    requete = session.get(url, proxies=p, verify=True,allow_redirects=True, headers = h, cookies = c)
     except:
@@ -127,9 +128,12 @@ def get_token():
     h3 = { 'Accept' : 'application/json, text/javascript, */*; q=0.01', 'X-Requested-With' : 'XMLHttpRequest' }
         
     if VERBOSE : aff('First url to', args.site)
-
-    r = s.get(u, proxies=p, verify = True,allow_redirects=True, headers= h1)
+    try:
+        r = s.get(u, proxies=p, verify = True,allow_redirects=True, headers= h1)
+    except:
+	    return 0
     if DEBUG : reponse(r,1)
+    if r.status_code == 404 : return 2
     r2 = s.get(r.url, proxies=p, verify=True,allow_redirects=True, headers = h1 ) #, cookies = c)
     if DEBUG : reponse(r2,2)
     b = r2.content
@@ -208,7 +212,7 @@ def get_token():
         aff('FedAuth =',p3.cookies['FedAuth'])
         aff('Successfull Authentication','')
         aff('-------------------------------------------------------------- <fin> -','')
-    return
+    return 1
 def get_args():
     global auth, p
     global args
@@ -251,11 +255,16 @@ if __name__ == "__main__":
     get_args()
     s = requests.Session()
     t0 = time.time()
-    get_token()
-    t1 = time.time()
-    get_folder(s,urllib.quote(args.bibliotheque))
-    tf=time.time()
-    print '- résolution authentication : {0:.2f} secondes'.format(t1-t0)
-    print '- scanning Bibliotheque en {0:.2f} secondes'.format(tf-t1)
-    print '- pour une taille de {0:.1f} Mo'.format(g_size/1000000.0)
-    print '-\n- by e-coucou 2015'
+    token = get_token()
+    if token == 1 :
+		t1 = time.time()
+		get_folder(s,urllib.quote(args.bibliotheque))
+		tf=time.time()
+		print '- résolution authentication : {0:.2f} secondes'.format(t1-t0)
+		print '- scanning Bibliotheque en {0:.2f} secondes'.format(tf-t1)
+		print '- pour une taille de {0:.1f} Mo'.format(g_size/1000000.0)
+		print '-\n- by e-coucou 2015'
+    elif token == 2 :
+    	print '404: file not found (bibliotheque, url)'
+    elif token == 0 :
+	    print 'Erreur: invalid request (proxy, site)'
