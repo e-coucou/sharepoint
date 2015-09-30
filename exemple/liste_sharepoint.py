@@ -179,7 +179,7 @@ def get_token():
     if DEBUG: reponse(r4,4)
     if not NTLM :
     # connexion à partir du username/password : le même que le proxy
-    # on assume le fait que le Proxy et l'AD sont synchronisés et sont dans le même DOMAINE
+    # on assume le fait que le Proxy et l'AD sont synchronisés et sont dans le même DOMAINE #
         b = r4.content
         tree = lxml.html.fromstring(b)
         vs = tree.get_element_by_id("__VIEWSTATE").value #
