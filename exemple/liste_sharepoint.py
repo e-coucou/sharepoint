@@ -10,6 +10,7 @@ level = 0
 g_cnt = 0
 g_file = 0
 g_size = 0
+flog=open('sharepoint.log','w')
 #----------------
 def aff(str,val):
     print '-  >>',str,val
@@ -62,8 +63,9 @@ def decode_folder(session,source,level,folder):
 		recurse_dir(session,rep,level)
     return
 def read_files(session,folder,level):
-    global g_file, g_size
+    global g_file, g_size, flog
     url = args.site + args.url +"_api/Web/GetFolderByServerRelativeUrl('"+folder+"')/files"
+    flog.write(url+'\n')
     requete = session.get(url, proxies=p, verify=True,allow_redirects=True, headers = h, cookies = c)
     xml = lxml.etree.fromstring(requete.content)
     nsmap = {'atom': 'http://www.w3.org/2005/Atom','d': 'http://schemas.microsoft.com/ado/2007/08/dataservices','m': 'http://schemas.microsoft.com/ado/2007/08/dataservices/metadata'}
@@ -86,12 +88,13 @@ def read_files(session,folder,level):
         sys.stdout.flush()
     return
 def recurse_dir(session,folder,level):
-    sys.stdout.write('-')
+    global fo
+    sys.stdout.write('+')
     sys.stdout.flush()
     level = level + 1
     read_files(session,folder,level)
     url = args.site + args.url +"_api/Web/GetFolderByServerRelativeUrl('"+folder+"')/folders"
-
+    flog.write(url+'\n')
     try:
 	    requete = session.get(url, proxies=p, verify=True,allow_redirects=True, headers = h, cookies = c)
     except:
@@ -106,10 +109,13 @@ def get_folder(session,folder):
 	name= folder+'.csv'
 	fo = open(name,'w')
 	fo.write('type;repertoire;nom;lien;id;qte;rel_url;taille\n')
-	print '-- lecture de repertoire / bibliotheque'
+	print '--------------------------------------------------------------------------'
+	print '- lecture de repertoire / bibliotheque'
+	print ''
 	bibli = args.url+folder
 	level = recurse_dir(s,bibli,0)
-	print
+	print ''
+	print ''
 	print '- total de repertoires :',g_cnt
 	print '- total de fichiers :',g_file
 	print '- soit : ', g_cnt+g_file,'elements'
@@ -124,6 +130,8 @@ def get_token():
     if OUTSIDE :
         p= ''
         aff('NO PROXY : Outside mode enable.','')
+    if NTLM : 
+        aff('NTLM : mode enable.','')
     h = {'User-Agent' : 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2.11) Gecko/20101012 Firefox/3.6.11'}
     h1 = { 'Connection' : 'keep-alive' , 'Upgrade-Insecure-Requests' : '1' , 'User-Agent' : 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.85 Safari/537.36' , 'Accept-Encoding' : 'gzip, deflate, sdch', 'Accept-Language' : 'fr-FR,fr;q=0.8,en-US;q=0.6,en;q=0.4'}
     h3 = { 'Accept' : 'application/json, text/javascript, */*; q=0.01', 'X-Requested-With' : 'XMLHttpRequest' }
@@ -153,6 +161,7 @@ def get_token():
     c = {}
     r3 = s.get(l, proxies=p, verify=True,allow_redirects=True , headers = h1 , cookies=c)
     if DEBUG : reponse(r3,3)
+    #print r3.content
     #-- debug
     try:
         j = json.loads(r3.content)
@@ -161,14 +170,14 @@ def get_token():
     except:
         aff('URL ERREUR:',ad)
     c = {}
-    if OUTSIDE :
+    if not NTLM :
         if VERBOSE : aff('get SAML token','')
         r4 = s.get(ad, proxies=p, verify=True,allow_redirects=True, headers = h, cookies = c)
     else:
         if VERBOSE : aff('get NTLM token','')
         r4 = s.get(ad, proxies=p, verify=True,allow_redirects=True, auth = auth, headers = h, cookies = c)
     if DEBUG: reponse(r4,4)
-    if OUTSIDE :
+    if not NTLM :
     # connexion à partir du username/password : le même que le proxy
     # on assume le fait que le Proxy et l'AD sont synchronisés et sont dans le même DOMAINE
         b = r4.content
@@ -184,7 +193,7 @@ def get_token():
     else:
         p1 = s.post(r4.url, allow_redirects=True, auth=auth, cookies=c, headers = h1) # no data car NTLM
         if VERBOSE : aff('POST Credentials to STS ','')
-    if OUTSIDE :
+    if not NTLM :
         tree = lxml.html.fromstring(p1.content)
     else:
         tree = lxml.html.fromstring(r4.content)
@@ -217,7 +226,7 @@ def get_token():
 def get_args():
     global auth, p
     global args
-    global DEBUG, OUTSIDE, VERBOSE
+    global DEBUG, OUTSIDE, VERBOSE, NTLM
     parser = argparse.ArgumentParser()
     parser = argparse.ArgumentParser(description='Liste les bibliotheques SharePoint dans un fichier csv')
     parser.add_argument("bibliotheque",help="renseignez le nom de la bibliotheque")
@@ -226,7 +235,8 @@ def get_args():
     parser.add_argument("-s","--site",default='https://my-org.sharepoint.com',help="adresse sharepoint du serveur -> ex: https://my.sharepoint.com")
     parser.add_argument("-u","--url",default='/sites/team/',help="reference relative du site sharepoint : /sites/.../")
     parser.add_argument("-d","--debug",default=False,action="store_true", help="=1 en mode DEBUG" )
-    parser.add_argument("-O","--Outside",default= False , action="store_true" ,help="=1 en mode Externe")
+    parser.add_argument("-O","--Outside",default= False , action="store_true" ,help="par defaut NO Proxy")
+    parser.add_argument("-N","--NTLM",default= False , action="store_true" ,help="mettre l'option pour passer en mode NTLM")
     parser.add_argument("-U","--username",default="eric",help="username")
     parser.add_argument("-D","--Domaine",default="MYORG",help="Domaine de l'Active Directory")
     parser.add_argument("-P","--Password",default="",help="password")
@@ -239,6 +249,7 @@ def get_args():
     p={'http': 'http://'+proxy , 'https':'https://'+proxy}
     auth = HttpNtlmAuth(args.Domaine+'\\'+args.username,Password)
     OUTSIDE = args.Outside
+    NTLM = args.NTLM
     DEBUG = args.debug
     VERBOSE = args.verbose
     if VERBOSE :
@@ -261,11 +272,15 @@ if __name__ == "__main__":
 		t1 = time.time()
 		get_folder(s,urllib.quote(args.bibliotheque))
 		tf=time.time()
+		print '-'
 		print '- résolution authentication : {0:.2f} secondes'.format(t1-t0)
 		print '- scanning Bibliotheque en {0:.2f} secondes'.format(tf-t1)
-		print '- pour une taille de {0:.1f} Mo'.format(g_size/1000000.0)
+		print '- pour une taille de {0:.1f} Mo'.format(g_size/1024.0/1024.0)
+		print '- Perfomance : {0:.1f} ms/elements'.format( (tf-t1)/(g_cnt+g_file)*1000.0 )
+		print '-'
 		print '-\n- by e-coucou 2015'
     elif token == 2 :
     	print '404: file not found (bibliotheque, url)'
     elif token == 0 :
 	    print 'Erreur: invalid request (proxy, site)'
+    flog.close()
