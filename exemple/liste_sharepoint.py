@@ -275,7 +275,7 @@ if __name__ == "__main__":
 		print ''
 		print '- résolution authentication : {0:.2f} secondes'.format(t1-t0)
 		print '- scanning Bibliotheque en {0:.2f} secondes'.format(tf-t1)
-		print '- pour une taille de {0:.1f} Mo'.format(g_size/1024.0/1024.0)
+		print '- pour une taille de {0:.2f} Go'.format(g_size/1024.0/1024.0/1024.0)
 		print '- Perfomance : {0:.1f} ms/elements'.format( (tf-t1)/(g_cnt+g_file)*1000.0 )
 		print ''
 		print '-\n- by e-coucou 2015'
